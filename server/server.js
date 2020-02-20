@@ -1,6 +1,6 @@
 import path from "path";
 import express from "express";
-import { MongoClient } from "mongodb";
+import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
@@ -37,9 +37,10 @@ app.listen(config.port, function onStart(err) {
 });
 
 // Database Connection URL
-// const url = config.mongoUri;
-// // Use connect method to connect to the server
-// MongoClient.connect(url, (err, db) => {
-//   console.log("Connected successfully to mongodb server");
-//   db.close();
-// });
+const url = config.mongoUri;
+// Use connect method to connect to the server
+mongoose.Promise = global.Promise;
+mongoose.connect(url);
+mongoose.connection.on("error", () => {
+  throw new Error(`unable to connect to database: ${mongoUri}`);
+});
