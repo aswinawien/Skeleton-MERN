@@ -9,6 +9,9 @@ import compress from "compression";
 
 import templete from "./../templete";
 import config from "./../config/config";
+
+import userRoutes from "./routes/user.routes";
+import authRoutes from "./routes/auth.routes";
 //comment out before building for production
 import devBundle from "./devBundle";
 
@@ -25,8 +28,23 @@ app.use(cookieParser());
 app.use(compress());
 app.use(helmet());
 app.use(cors());
-app.get("/", (req, res) => {
-  res.status(200).send(templete());
+
+app.use("/", userRoutes);
+app.use("/", authRoutes);
+app.use((err, req, res, next) => {
+  if (err.name === "UnauthorizedError") {
+    res.status(401).json({ error: err.name + ": " + err.message });
+  }
+});
+
+// Database Connection URL
+const url = config.mongoUri;
+console.log("mongo url", url);
+// Use connect method to connect to the server
+mongoose.connect(url);
+mongoose.Promise = global.Promise;
+mongoose.connection.on("error", () => {
+  throw new Error(`unable to connect to database: ${mongoUri}`);
 });
 
 app.listen(config.port, function onStart(err) {
@@ -34,13 +52,4 @@ app.listen(config.port, function onStart(err) {
     console.log(err);
   }
   console.info("Server started on port %s.", config.port);
-});
-
-// Database Connection URL
-const url = config.mongoUri;
-// Use connect method to connect to the server
-mongoose.Promise = global.Promise;
-mongoose.connect(url);
-mongoose.connection.on("error", () => {
-  throw new Error(`unable to connect to database: ${mongoUri}`);
 });
