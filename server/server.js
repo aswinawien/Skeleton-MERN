@@ -7,7 +7,7 @@ import helmet from "helmet";
 import cors from "cors";
 import compress from "compression";
 
-import templete from "./../templete";
+import Template from "./../templete";
 import config from "./../config/config";
 
 import userRoutes from "./routes/user.routes";
@@ -35,6 +35,10 @@ app.use((err, req, res, next) => {
   if (err.name === "UnauthorizedError") {
     res.status(401).json({ error: err.name + ": " + err.message });
   }
+});
+
+app.get("/", (req, res) => {
+  res.status(200).send(Template());
 });
 
 // Database Connection URL
