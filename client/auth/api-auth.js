@@ -11,17 +11,21 @@ const signIn = user => {
     .then(res => {
       return res.json();
     })
-    .catch(e => console.log(e));
+    .catch(e => {
+      return e;
+    });
 };
 
 const signOut = () => {
   return fetch("/auth/signout", {
-    method: "GET"
+    method: "POST"
   })
     .then(res => {
       return res.json();
     })
-    .catch(e => console.log(e));
+    .catch(e => {
+      return e;
+    });
 };
 
 export { signIn, signOut };

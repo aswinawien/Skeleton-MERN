@@ -37,11 +37,13 @@ const read = (params, credentials) => {
     .then(res => {
       return res.json();
     })
-    .catch(e => console.log(e));
+    .catch(e => {
+      console.log("error", e);
+    });
 };
 
 const update = (params, credentials, user) => {
-  return fetch("/api/user" + params.userId, {
+  return fetch("/api/user/" + params.userId, {
     method: "PUT",
     headers: {
       Accept: "application/json",
@@ -53,11 +55,13 @@ const update = (params, credentials, user) => {
     .then(res => {
       return res.json();
     })
-    .catch(e => console.log(e));
+    .catch(e => {
+      return e;
+    });
 };
 
 const remove = (params, credentials) => {
-  return fetch("/api/user" + params.userId, {
+  return fetch("/api/user/" + params.userId, {
     method: "DELETE",
     headers: {
       Accept: "application/json",
@@ -68,7 +72,9 @@ const remove = (params, credentials) => {
     .then(res => {
       return res.json();
     })
-    .catch(e => console.log(e));
+    .catch(e => {
+      return e;
+    });
 };
 
 export { create, list, read, update, remove };

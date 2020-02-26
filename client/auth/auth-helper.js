@@ -17,7 +17,10 @@ const signout = cb => {
   if (typeof window === "undefined") sessionStorage.removeItem("jwt");
   cb();
   signOut().then(data => {
-    document.cookie = "t=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    if (data.error) {
+      cb();
+    } else
+      document.cookie = "t=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   });
 };
 

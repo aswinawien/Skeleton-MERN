@@ -12,14 +12,14 @@ import Avatar from "material-ui/Avatar";
 import IconButton from "material-ui/IconButton";
 import Button from "material-ui/Button";
 import Typography from "material-ui/Typography";
-import Edit from "material-ui-icons/Edit";
 import Person from "material-ui-icons/Person";
 import Divider from "material-ui/Divider";
-// import DeleteUser from "./DeleteUser";
-import { Redirect } from "react-router-dom";
+import DeleteUser from "./DeleteUser";
+import { Link, Redirect } from "react-router-dom";
 
 import authHelper from "../auth/auth-helper";
 import { read } from "./api-user";
+import EditProfile from "./EditProfile";
 
 const styles = theme => ({
   root: theme.mixins.gutters({
@@ -52,16 +52,21 @@ class Profile extends React.Component {
         userId: userId
       },
       { t: jwt.token }
-    ).then(data => {
-      if (data.error) {
-        this.setState({
-          redirectToSignin: true
-        });
-      } else
-        this.setState({
-          user: data
-        });
-    });
+    )
+      .then(data => {
+        console.log("data", data);
+        if (data.error) {
+          this.setState({
+            redirectToSignin: true
+          });
+        } else
+          this.setState({
+            user: data
+          });
+      })
+      .catch(e => {
+        console.log("error", e);
+      });
   }
 
   componentDidMount() {
@@ -73,7 +78,7 @@ class Profile extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, history } = this.props;
     const redirectToSignin = this.state.redirectToSignin;
     if (redirectToSignin) {
       return <Redirect to="/signin" />;
@@ -96,13 +101,14 @@ class Profile extends React.Component {
             />{" "}
             {authHelper.isAuthenticated().user &&
               authHelper.isAuthenticated().user._id == this.state.user._id && (
-                <ListItemSecondaryAction>
-                  <Link to={"/user/edit/" + this.state.user._id}>
-                    <IconButton aria-label="Edit" color="primary">
-                      <Edit />
-                    </IconButton>
-                  </Link>
-                  {/* <DeleteUser userId={this.state.user._id} /> */}
+                <ListItemSecondaryAction
+                  style={{
+                    display: "flex",
+                    flexDirection: "row"
+                  }}
+                >
+                  <EditProfile userId={this.state.user._id} />
+                  <DeleteUser userId={this.state.user._id} />
                 </ListItemSecondaryAction>
               )}
           </ListItem>
