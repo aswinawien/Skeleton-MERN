@@ -98,7 +98,10 @@ class Profile extends React.Component {
             <ListItemText
               primary={this.state.user.name}
               secondary={this.state.user.email}
-            />{" "}
+            />
+            <ListItem>
+              <ListItemText primary={this.state.user.about} />
+            </ListItem>
             {authHelper.isAuthenticated().user &&
               authHelper.isAuthenticated().user._id == this.state.user._id && (
                 <ListItemSecondaryAction

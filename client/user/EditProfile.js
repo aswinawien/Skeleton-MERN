@@ -11,6 +11,8 @@ import TextField from "material-ui/TextField";
 import Typography from "material-ui/Typography";
 import Icon from "material-ui/Icon";
 import IconButton from "material-ui/IconButton";
+import Avatar from "material-ui/Avatar";
+import FileUpload from "material-ui-icons/FileUpload";
 import Edit from "material-ui-icons/Edit";
 import PropTypes from "prop-types";
 import { withStyles } from "material-ui/styles";
@@ -41,6 +43,17 @@ const styles = theme => ({
   submit: {
     margin: "auto",
     marginBottom: theme.spacing.unit * 2
+  },
+  input: {
+    display: "none"
+  },
+  filename: {
+    marginLeft: "10px"
+  },
+  bigAvatar: {
+    width: 60,
+    height: 60,
+    margin: "auto"
   }
 });
 
@@ -58,6 +71,7 @@ class EditProfile extends Component {
   }
 
   componentDidMount = () => {
+    this.userData = new FormData();
     const jwt = auth.isAuthenticated();
     read(
       {
@@ -97,7 +111,9 @@ class EditProfile extends Component {
     });
   };
   handleChange = name => event => {
-    this.setState({ [name]: event.target.value });
+    const value = name === "photo" ? event.target.files[0] : event.target.value;
+    this.userData.set(name, value);
+    this.setState({ [name]: value });
   };
   handleRequestClose = () => {
     this.setState({ open: false });
@@ -121,14 +137,30 @@ class EditProfile extends Component {
         </IconButton>
         <Dialog open={this.state.open} onClose={this.handleRequestClose}>
           <Card className={classes.card}>
-            <CardContent>
-              <Typography
+            <DialogContent>
+              <DialogTitle
                 type="headline"
                 component="h2"
                 className={classes.title}
               >
                 Edit Profile
-              </Typography>
+              </DialogTitle>
+              <input
+                accept="image/*"
+                type="file"
+                onChange={this.handleChange("photo")}
+                style={{ display: "none" }}
+                id="icon-button-file"
+              />
+              <label htmlFor="icon-button-file">
+                <Button variant="raised" color="default" component="span">
+                  Upload <FileUpload />
+                </Button>
+              </label>
+              <span className={classes.filename}>
+                {this.state.photo ? this.state.photo.name : ""}
+              </span>
+              <br />
               <TextField
                 id="name"
                 label="Name"
@@ -136,6 +168,16 @@ class EditProfile extends Component {
                 value={this.state.name}
                 onChange={this.handleChange("name")}
                 margin="normal"
+              />
+              <br />
+              <TextField
+                id="multiline-flexible"
+                label="About"
+                multiline
+                rows="2"
+                className={classes.textField}
+                value={this.state.about}
+                onChange={this.handleChange("about")}
               />
               <br />
               <TextField
@@ -166,8 +208,8 @@ class EditProfile extends Component {
                   {this.state.error}
                 </Typography>
               )}
-            </CardContent>
-            <CardActions>
+            </DialogContent>
+            <DialogActions>
               <Button
                 color="primary"
                 variant="raised"
@@ -176,7 +218,7 @@ class EditProfile extends Component {
               >
                 Submit
               </Button>
-            </CardActions>
+            </DialogActions>
           </Card>
         </Dialog>
       </div>
